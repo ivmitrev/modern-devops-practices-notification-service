@@ -132,6 +132,6 @@ jobs:
 
       - name: Smoke Test (Health Check)
         run: |
-          kubectl port-forward svc/notification-service 8080:8080 -n notification-service &
+          kubectl port-forward svc/notification-service 8080:80 -n notification-service &
           sleep 10
           curl -f http://localhost:8080/actuator/health
