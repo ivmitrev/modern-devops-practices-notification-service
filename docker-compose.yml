@@ -1,0 +1,28 @@
+﻿version: '3.8'
+
+services:
+  notification-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: notification_service
+    ports:
+      - "8080:8080"
+    environment:
+      # Email configuration (Ethereal for testing)
+      - EMAIL_USERNAME=${EMAIL_USERNAME:-}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD:-}
+      - SPRING_PROFILES_ACTIVE=dev
+    networks:
+      - notif-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  notif-network:
+    driver: bridge
