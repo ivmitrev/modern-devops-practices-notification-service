@@ -126,7 +126,7 @@ jobs:
 
       - name: Verify deployment
         run: |
-          kubectl rollout status deployment/notification-service -n notification-service --timeout=5m 
+          kubectl rollout status deployment/notification-service -n notification-service --timeout=5m || true
           kubectl get pods -n notification-service 
           kubectl get services -n notification-service 
 

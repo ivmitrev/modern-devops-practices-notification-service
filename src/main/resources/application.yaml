@@ -44,6 +44,8 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enables: true
   health:
     mail:
       enabled: true
