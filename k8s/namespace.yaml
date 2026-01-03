@@ -1,0 +1,7 @@
+﻿apiVersion: v1
+kind: Namespace
+metadata:
+  name: notification-service
+  labels:
+    app: notification-service
+    environment: development

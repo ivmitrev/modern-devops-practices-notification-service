@@ -1,0 +1,30 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notification-service-config
+  namespace: notification-service
+  labels:
+    app: notification-service
+data:
+  # Application configuration
+  SPRING_PROFILES_ACTIVE: "dev"
+
+  # Database configuration
+  SPRING_DATASOURCE_URL: "jdbc:h2:mem:notificationdb"
+  SPRING_DATASOURCE_DRIVER: "org.h2.Driver"
+  SPRING_DATASOURCE_USERNAME: "sa"
+
+  # H2 Console
+  SPRING_H2_CONSOLE_ENABLED: "true"
+  SPRING_H2_CONSOLE_PATH: "/h2-console"
+
+  # Email configuration
+  SPRING_MAIL_HOST: "smtp.ethereal.email"
+  SPRING_MAIL_PORT: "587"
+
+  # Actuator
+  MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: "health,info,metrics"
+  MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "always"
+
+  # Server
+  SERVER_PORT: "8080"
