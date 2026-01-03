@@ -92,13 +92,20 @@ jobs:
         with:
           name: docker-image
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
+      - name: Start Minikube
+        uses: medyagh/setup-minikube@latest
         with:
-          version: 'latest'
+          kubernetes-version: 'v1.28.3'
+
+      - name: Load Docker image into Minikube
+        run: |
+          docker load -i notification-service.tar
+          minikube image load notification-service:${{ github.sha }}
 
       - name: Deploy to Kubernetes
         run: |
+          kubectl create namespace notification-service --dry-run=client -o yaml | kubectl apply -f -
+          
           kubectl create secret generic notification-service-secret \
             --namespace=notification-service \
             --from-literal=EMAIL_USERNAME=${{ secrets.EMAIL_USERNAME }} \
@@ -109,3 +116,9 @@ jobs:
           kubectl apply -f k8s/configmap.yaml
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
+
+      - name: Verify deployment
+        run: |
+          kubectl get pods -n notification-service
+          kubectl get services -n notification-service
+          kubectl rollout status deployment/notification-service -n notification-service --timeout=5m
