@@ -50,7 +50,7 @@ jobs:
         with:
           context: .
           load: true
-          tags: notification-service:${{ github.sha }}
+          tags: notification-service:latest
           build-args: |
             EMAIL_USERNAME=${{ env.EMAIL_USERNAME }}
             EMAIL_PASSWORD=${{ env.EMAIL_PASSWORD }}
@@ -60,7 +60,7 @@ jobs:
       - name: Scan Docker image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: notification-service:${{ github.sha }}
+          image-ref: notification-service:latest
           format: 'sarif'
           output: 'trivy-image-results.sarif'
           severity: 'CRITICAL,HIGH'
@@ -73,7 +73,7 @@ jobs:
 
       - name: Save Docker image
         run: |
-          docker save notification-service:${{ github.sha }} -o notification-service.tar
+          docker save notification-service:latest -o notification-service.tar
 
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4
@@ -108,7 +108,7 @@ jobs:
       - name: Load Docker image into Minikube
         run: |
           docker load -i notification-service.tar
-          minikube image load notification-service:${{ github.sha }}
+          minikube image load notification-service:latest
 
       - name: Deploy to Kubernetes
         run: |
@@ -123,12 +123,9 @@ jobs:
           kubectl apply -f k8s/configmap.yaml
           kubectl apply -f k8s/deployment.yaml
           kubectl apply -f k8s/service.yaml
-          kubectl set image deployment/notification-service \
-            notification-service=notification-service:${{ github.sha }} \
-            -n notification-service
 
       - name: Verify deployment
         run: |
-          kubectl rollout status deployment/notification-service -n notification-service --timeout=5m
+          kubectl rollout status deployment/notification-service -n notification-service --timeout=2m
           kubectl get pods -n notification-service
           kubectl get services -n notification-service
