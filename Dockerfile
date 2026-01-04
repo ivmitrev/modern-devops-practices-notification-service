@@ -23,6 +23,9 @@ USER spring:spring
 
 COPY --from=build /app/target/*.jar app.jar
 
+ENV EMAIL_USERNAME=${EMAIL_USERNAME}
+ENV EMAIL_PASSWORD=${EMAIL_PASSWORD}
+
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
