@@ -3,11 +3,17 @@
 import com.example.notification_service.model.Notification
 import com.example.notification_service.model.NotificationStatus
 import com.example.notification_service.model.NotificationType
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
 import jakarta.mail.internet.MimeMessage
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertTrue
+import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.mail.MailSendException
 import org.springframework.mail.javamail.JavaMailSender
 import java.util.*
 
@@ -84,10 +90,11 @@ class EmailServiceTest {
             status = NotificationStatus.PENDING
         )
 
-        every { mailSender.createMimeMessage() } throws RuntimeException("SMTP connection failed")
+        every { mailSender.createMimeMessage() } throws
+                MailSendException("SMTP connection failed")
 
         // When & Then
-        assertThrows(RuntimeException::class.java) {
+        assertThrows(MailSendException::class.java) {
             emailService.sendEmail(notification)
         }
     }

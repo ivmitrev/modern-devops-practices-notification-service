@@ -5,8 +5,12 @@ import com.example.notification_service.model.Notification
 import com.example.notification_service.model.NotificationStatus
 import com.example.notification_service.model.NotificationType
 import com.example.notification_service.repository.NotificationRepository
-import io.mockk.*
-import org.junit.jupiter.api.Assertions.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

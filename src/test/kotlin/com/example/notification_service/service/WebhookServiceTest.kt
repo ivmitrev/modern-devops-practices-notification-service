@@ -6,8 +6,12 @@ import com.example.notification_service.model.NotificationType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import io.mockk.*
-import org.junit.jupiter.api.Assertions.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -88,7 +92,14 @@ class WebhookServiceTest {
             status = NotificationStatus.PENDING
         )
 
-        every { restTemplate.exchange(any<String>(), any(), any(), String::class.java) } throws RuntimeException("Connection timeout")
+        every {
+            restTemplate.exchange(
+                any<String>(),
+                any(),
+                any(),
+                String::class.java
+            )
+        } throws RuntimeException("Connection timeout")
 
         // When & Then
         assertThrows(RuntimeException::class.java) {

@@ -1,3 +1,4 @@
+@file:Suppress("PackageNaming", "SpreadOperator")
 package com.example.notification_service
 
 import org.springframework.boot.autoconfigure.SpringBootApplication

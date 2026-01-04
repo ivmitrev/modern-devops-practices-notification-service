@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 
 @Service
@@ -39,12 +39,13 @@ class NotificationService(
         notification = notificationRepository.save(notification)
         logger.info("Notification created with id: ${notification.id}")
 
+        @Suppress("TooGenericExceptionCaught")
         try {
             sendNotification(notification)
             notification.status = NotificationStatus.SENT
             notification.sentAt = LocalDateTime.now()
             logger.info("Notification sent successfully: ${notification.id}")
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             notification.status = NotificationStatus.FAILED
             notification.error = e.message
             logger.error("Failed to send notification: ${notification.id}", e)
@@ -72,13 +73,11 @@ class NotificationService(
         when (type) {
             NotificationType.EMAIL -> {
                 val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
-                if (!emailRegex.matches(recipient)) {
-                    throw IllegalArgumentException("Invalid email address: $recipient")
-                }
+                require(emailRegex.matches(recipient)) { "Invalid email address: $recipient" }
             }
             NotificationType.WEBHOOK -> {
-                if (!recipient.startsWith("http://") && !recipient.startsWith("https://")) {
-                    throw IllegalArgumentException("Webhook URL must start with http:// or https://")
+                require(recipient.startsWith("http://") || recipient.startsWith("https://")) {
+                    "Webhook URL must start with http:// or https://"
                 }
             }
         }

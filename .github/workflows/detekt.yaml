@@ -1,0 +1,41 @@
+﻿name: "Code Quality & Style (Detekt)"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  detekt:
+    name: Detekt Kotlin Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Install Detekt CLI
+        run: |
+          curl -sSLo detekt-cli.jar https://github.com/detekt/detekt/releases/download/v1.23.1/detekt-cli-1.23.1-all.jar
+
+      - name: Run Detekt
+        run: |
+          java -jar detekt-cli.jar -i src --report sarif:target/detekt.sarif
+
+      - name: Upload Detekt SARIF report
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: target/detekt.sarif
