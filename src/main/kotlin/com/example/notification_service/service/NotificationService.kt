@@ -44,7 +44,7 @@ class NotificationService(
             notification.status = NotificationStatus.SENT
             notification.sentAt = LocalDateTime.now()
             logger.info("Notification sent successfully: ${notification.id}")
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             notification.status = NotificationStatus.FAILED
             notification.error = e.message
             logger.error("Failed to send notification: ${notification.id}", e)
@@ -72,13 +72,11 @@ class NotificationService(
         when (type) {
             NotificationType.EMAIL -> {
                 val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
-                if (!emailRegex.matches(recipient)) {
-                    throw IllegalArgumentException("Invalid email address: $recipient")
-                }
+                require(emailRegex.matches(recipient)) { "Invalid email address: $recipient" }
             }
             NotificationType.WEBHOOK -> {
-                if (!recipient.startsWith("http://") && !recipient.startsWith("https://")) {
-                    throw IllegalArgumentException("Webhook URL must start with http:// or https://")
+                require(recipient.startsWith("http://") || recipient.startsWith("https://")) {
+                    "Webhook URL must start with http:// or https://"
                 }
             }
         }

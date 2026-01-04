@@ -3,7 +3,8 @@
 import com.example.notification_service.model.Notification
 import com.example.notification_service.model.NotificationStatus
 import com.example.notification_service.model.NotificationType
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.*

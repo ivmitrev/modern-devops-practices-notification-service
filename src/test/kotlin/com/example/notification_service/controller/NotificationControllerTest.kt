@@ -5,10 +5,14 @@ import com.example.notification_service.model.Notification
 import com.example.notification_service.model.NotificationStatus
 import com.example.notification_service.model.NotificationType
 import com.example.notification_service.service.NotificationService
-import io.mockk.*
-import org.junit.jupiter.api.Assertions.*
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import io.mockk.verify
 import org.springframework.http.HttpStatus
 import java.util.*
 

@@ -1,8 +1,10 @@
 ﻿package com.example.notification_service.service
 
 import com.example.notification_service.model.Notification
+import jakarta.mail.MessagingException
 import jakarta.mail.internet.MimeMessage
 import org.slf4j.LoggerFactory
+import org.springframework.mail.MailException
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
@@ -32,8 +34,11 @@ class EmailService(
             logger.info("Email sent successfully to: ${notification.recipient}")
             true
 
-        } catch (e: Exception) {
+        } catch (e: MailException) {
             logger.error("Failed to send email to: ${notification.recipient}", e)
+            throw e
+        } catch (e: MessagingException) {
+            logger.error("Failed to construct email message for: ${notification.recipient}", e)
             throw e
         }
     }

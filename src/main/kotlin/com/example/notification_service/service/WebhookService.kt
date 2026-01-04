@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
+import org.springframework.web.client.RestClientException
 import org.springframework.web.client.RestTemplate
 import java.time.LocalDateTime
 
@@ -48,7 +49,7 @@ class WebhookService(
                 false
             }
 
-        } catch (e: Exception) {
+        } catch (e: RestClientException) {
             logger.error("Failed to send webhook to: ${notification.recipient}", e)
             throw e
         }
