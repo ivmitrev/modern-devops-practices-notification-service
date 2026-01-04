@@ -26,8 +26,13 @@ jobs:
           java-version: 21
           cache: maven
 
+      - name: Install Detekt CLI
+        run: |
+          curl -sSLo detekt-cli.jar https://github.com/detekt/detekt/releases/download/v1.23.1/detekt-cli-1.23.1-all.jar
+
       - name: Run Detekt
-        run: mvn detekt:check
+        run: |
+          java -jar detekt-cli.jar -i src --report sarif:target/detekt.sarif
 
       - name: Upload Detekt SARIF report
         if: always()
