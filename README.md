@@ -1,32 +1,32 @@
-# 📧 Modern DevOps Practices - Notification Service
+#  Modern DevOps Practices - Notification Service
 
 A production-grade Kotlin Notification Service demonstrating modern DevOps practices with fully automated CI/CD pipeline, security scanning, containerization, and Kubernetes deployment.
 
-## 📑 Table of Contents
+##  Table of Contents
 
-- [Project Overview](#-project-overview)
-- [DevOps Topics Covered](#-devops-topics-covered)
-- [Technology Stack](#-technology-stack)
-- [Deep Dive: SAST Security Analysis](#-deep-dive-sast-security-analysis)
-- [Getting Started](#-getting-started)
-- [CI/CD Pipeline](#-cicd-pipeline)
-- [Kubernetes Deployment](#-kubernetes-deployment)
-- [Additional Documentation](#-additional-documentation)
+- [Project Overview](#project-overview)
+- [DevOps Topics Covered](#devops-topics-covered)
+- [Technology Stack](#technology-stack)
+- [Deep Dive: SAST Security Analysis](#deep-dive-sast-security-analysis)
+- [Getting Started](#getting-started)
+- [CI/CD Pipeline](#cicd-pipeline)
+- [Kubernetes Deployment](#kubernetes-deployment)
+- [Additional Documentation](#additional-documentation)
 
-## 🎯 Project Overview
+##  Project Overview
 
 **T-shaped DevOps implementation**: Comprehensive horizontal coverage of modern DevOps practices with a deep vertical dive into **SAST (Static Application Security Testing)**.
 
 ### Key Features
-- 📨 Multi-channel notifications (Email, Webhook)
-- 🔄 Automated CI/CD with GitHub Actions
-- 🔐 Multi-layered security (CodeQL, Detekt, Trivy)
-- 🐳 Docker containerization with multi-stage builds
-- ☸️ Kubernetes deployment with rolling updates
-- 🗄️ Database migrations with Flyway
-- 🏥 Health checks and monitoring
+-  Multi-channel notifications (Email, Webhook)
+-  Automated CI/CD with GitHub Actions
+-  Multi-layered security (CodeQL, Detekt, Trivy)
+-  Docker containerization with multi-stage builds
+-  Kubernetes deployment with rolling updates
+-  Database migrations with Flyway
+-  Health checks and monitoring
 
-## 🎓 DevOps Topics Covered
+##  DevOps Topics Covered
 
 This project implements **12 DevOps topics** from the Modern DevOps Practices course:
 
@@ -47,7 +47,7 @@ This project implements **12 DevOps topics** from the Modern DevOps Practices co
 
 ✅ **Mandatory Components**: Continuous Integration ✅ | Deploy to Kubernetes ✅
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 **Core**: Kotlin • Spring Boot • Java 21 • Maven  
 **Database**: H2 Database • Flyway Migrations  
@@ -55,7 +55,7 @@ This project implements **12 DevOps topics** from the Modern DevOps Practices co
 **Security**: CodeQL (SAST) • Detekt • Trivy  
 **Testing**: JUnit 5 • MockK • Spring MockMvc
 
-## 🏗️ Architecture
+##  Architecture
 
 ```
 GitHub Repository (Source Control)
@@ -68,7 +68,7 @@ GitHub Actions CI/CD
          ↓
 Kubernetes Cluster
   ├─ Deployment (2 replicas)
-  ├─ Service (LoadBalancer)
+  ├─ Service (NodePort)
   ├─ ConfigMap (Configuration)
   └─ Secrets (Credentials)
 ```
@@ -92,9 +92,10 @@ Repository Layer (NotificationRepository + H2 Database)
 │  │           Namespace: notification-service                     │  │
 │  │                                                               │  │
 │  │  ┌─────────────────────────────────────────────────────────┐  │  │ 
-│  │  │  Service (LoadBalancer)                                 │  │  │
-│  │  │  - Type: LoadBalancer                                   │  │  │
-│  │  │  - Port: 80 → 8080                                      │  │  │
+│  │  │  Service (NodePort)                                     │  │  │
+│  │  │  - Type: NodePort                                       │  │  │
+│  │  │  - Port: 80 → 8080                                      |  |  |
+|  |  |  - NodePort: 30080                                      │  │  │
 │  │  │  - Selector: app=notification-service                   │  │  │
 │  │  └──────────────────────┬──────────────────────────────────┘  │  │
 │  │                         │ (Routes traffic)                    │  │
@@ -102,7 +103,6 @@ Repository Layer (NotificationRepository + H2 Database)
 │  │  ┌─────────────────────────────────────────────────────────┐  │  │
 │  │  │  Deployment: notification-service                       │  │  │
 │  │  │  - Replicas: 2                                          │  │  │
-│  │  │  - Strategy: RollingUpdate (maxSurge:1, maxUnavail:0)   │  │  │
 │  │  │                                                         │  │  │
 │  │  │  ┌──────────────────────┐   ┌──────────────────────┐    │  │  │
 │  │  │  │  Pod 1               │   │  Pod 2               │    │  │  │
@@ -143,7 +143,7 @@ Repository Layer (NotificationRepository + H2 Database)
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-## 🔐 Deep Dive: SAST Security Analysis
+##  Deep Dive: SAST Security Analysis
 
 ### What is SAST?
 **Static Application Security Testing (SAST)** analyzes source code to detect security vulnerabilities before runtime. It's a critical "shift-left" security practice that catches issues early when they're cheapest to fix.
@@ -207,7 +207,7 @@ Output: SARIF
 Database: NVD, Red Hat, Debian, Alpine Security
 ```
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Java 21 (OpenJDK/Temurin)
@@ -219,7 +219,7 @@ Database: NVD, Red Hat, Debian, Alpine Security
 
 **1. Clone & Configure**
 ```bash
-git clone https://github.com/YOUR_USERNAME/modern-devops-practices-notification-service.git
+git clone https://github.com/ivmitrev/modern-devops-practices-notification-service.git
 cd modern-devops-practices-notification-service
 
 # Setup credentials (use https://ethereal.email/ for testing)
@@ -263,11 +263,18 @@ kubectl apply -f k8s/
 minikube service notification-service -n notification-service
 ```
 
-### API Examples
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| **POST** | `/api/notifications/send` | Create and send new notification |
+| **GET** | `/api/notifications/{id}` | Retrieve specific notification by ID |
+| **GET** | `/api/notifications/user/{userId}` | Retrieve all notifications for a user |
+| **GET** | `/api/notifications` | Retrieve all notifications |
 
 **Create Email Notification**
 ```bash
-curl -X POST http://localhost:8080/api/notifications \
+curl -X POST http://localhost:8080/api/notifications/send \
   -H "Content-Type: application/json" \
   -d '{
     "userId": "user123",
@@ -280,7 +287,7 @@ curl -X POST http://localhost:8080/api/notifications \
 
 **Create Webhook Notification**
 ```bash
-curl -X POST http://localhost:8080/api/notifications \
+curl -X POST http://localhost:8080/api/notifications/send \
   -H "Content-Type: application/json" \
   -d '{
     "userId": "user456",
@@ -295,7 +302,7 @@ curl -X POST http://localhost:8080/api/notifications \
 curl http://localhost:8080/actuator/health
 ```
 
-## 🔄 CI/CD Pipeline
+##  CI/CD Pipeline
 
 ### Pipeline Jobs
 
@@ -333,7 +340,7 @@ GitHub Repository → Settings → Secrets
 - EMAIL_PASSWORD
 ```
 
-## ☸️ Kubernetes Deployment
+##  Kubernetes Deployment
 
 ### Resources Overview
 
@@ -343,14 +350,7 @@ GitHub Repository → Settings → Secrets
 | ConfigMap | `configmap.yaml` | Non-sensitive config       |
 | Secret | `secret.yaml` | Credentials (example file) |
 | Deployment | `deployment.yaml` | 2 replicas + health probes |
-| Service | `service.yaml` | LoadBalancer               |
-
-### Rolling Update Strategy
-```yaml
-maxSurge: 1
-maxUnavailable: 0
-# Zero-downtime deployments
-```
+| Service | `service.yaml` | NodePort               |
 
 ### Common Commands
 
@@ -376,7 +376,7 @@ kubectl describe pod <pod-name> -n notification-service
 kubectl get events -n notification-service --sort-by='.lastTimestamp'
 ```
 
-## 🗄️ Database Migrations
+##  Database Migrations
 
 **Flyway** manages database schema versions automatically.
 
@@ -406,7 +406,7 @@ CREATE INDEX idx_notifications_status ON notifications(status);
 ./mvnw flyway:validate  # Validate migrations
 ```
 
-## 🧪 Testing Strategy
+##  Testing Strategy
 
 **Run Tests:**
 ```bash
@@ -416,7 +416,7 @@ CREATE INDEX idx_notifications_status ON notifications(status);
 
 **Frameworks:** JUnit 5, MockK, Spring MockMvc, MockMvc
 
-## 🌿 Branching Strategy
+##  Branching Strategy
 
 **GitHub Flow** with protected main branch
 
@@ -428,13 +428,13 @@ main (protected)
 
 **Workflow:**
 1. Create issue
-2. Branch: `feature/issue-123-description`
-3. Develop + commit: `feat: Description (#123)`
+2. Branch: `feature/add-sms`
+3. Develop + commit: `feat: Added sms notifications`
 4. Push + create PR
 5. CI/CD checks + code review
 6. Squash and merge
 
-## 📊 Monitoring & Health
+##  Monitoring & Health
 
 **Actuator Endpoints:**
 ```bash
@@ -452,7 +452,7 @@ kubectl top pods -n notification-service
 kubectl logs -f deployment/notification-service -n notification-service
 ```
 
-## 📁 Additional Documentation
+##  Additional Documentation
 
 ### Project Structure
 ```
@@ -460,7 +460,7 @@ kubectl logs -f deployment/notification-service -n notification-service
 k8s/                   # Kubernetes manifests
 src/main/kotlin/       # Application code
 src/main/resources/    # Configs + DB migrations
-src/test/kotlin/       # Unit + integration tests
+src/test/kotlin/       # Unit tests
 Dockerfile             # Multi-stage container build
 docker-compose.yml     # Local development
 pom.xml                # Maven dependencies
@@ -474,9 +474,6 @@ All security findings: `GitHub → Security → Code Scanning`
 
 ### Future Enhancements
 - [ ] SMS/Push notifications
-- [ ] PostgreSQL + Redis
+- [ ] PostgreSQL
 - [ ] Message queue (RabbitMQ/Kafka)
 - [ ] OAuth2 authentication
-- [ ] Prometheus + Grafana
-- [ ] Helm charts
-- [ ] Canary deployments
